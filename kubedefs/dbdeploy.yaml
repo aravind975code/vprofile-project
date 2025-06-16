@@ -14,18 +14,26 @@ spec:
       labels:
         app: vprodb
     spec:
+      initContainers:
+        - name: init-db
+          image: busybox:latest
+          args: ['rm', '-rf', "/var/lib/mysql/lost+found"]
+          volumeMounts:
+            - name: vprodbdata
+              mountPath: /var/lib/mysql
+
       containers:
         - name: vprodb
           image: devopsaravind975/git:db
-          volumemounts:
-            - mountpath: /var/lib/mysql
-              name: vpro-db-data
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: vprodbdata
           ports:
             - containerPort: 1433
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
-                secretkeyRef:
+                secretKeyRef:
                   name: app-secret
                   key: db-pass
           resources:
@@ -35,12 +43,13 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
-        - name: busybox
+
+        - name: db-maintenance
           image: busybox:latest
           args: ['rm', '-rf', "/var/lib/mysql/lost+found"]
-          volumemounts:
-            - name: vpro-db-data
-              mountpath: /var/lib/mysql
+          volumeMounts:
+            - name: vprodbdata
+              mountPath: /var/lib/mysql
           resources:
             requests:
               memory: "32Mi"
@@ -48,10 +57,8 @@ spec:
             limits:
               memory: "64Mi"
               cpu: "100m"
-      initContainers:
-        - name: busybox
-          image: busybox:latest
-          args: ['rm', '-rf', "/var/lib/mysql/lost+found"]
-          volumemounts:
-            - name: vpro-db-data
-              mountpath: /var/lib/mysql
+
+      volumes:
+        - name: vprodbdata
+          persistentVolumeClaim:
+            claimName: vpro-db-pvc
