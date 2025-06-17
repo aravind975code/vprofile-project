@@ -44,21 +44,7 @@ spec:
               memory: "512Mi"
               cpu: "500m"
 
-        - name: db-maintenance
-          image: busybox:latest
-          args: ['rm', '-rf', "/var/lib/mysql/lost+found"]
-          volumeMounts:
-            - name: vprodbdata
-              mountPath: /var/lib/mysql
-          resources:
-            requests:
-              memory: "32Mi"
-              cpu: "50m"
-            limits:
-              memory: "64Mi"
-              cpu: "100m"
-
       volumes:
         - name: vprodbdata
           persistentVolumeClaim:
-            claimName: vpro-db-pvc
+            claimName: db-pv-claim
