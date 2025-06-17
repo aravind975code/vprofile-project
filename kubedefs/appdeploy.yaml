@@ -14,13 +14,6 @@ spec:
       labels:
         app: vproapp
     spec:
-      initContainers:
-        - name: init-myservice
-          image: busybox:1.28
-          command: ['sh', '-c', "until nslookup vprodb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
-        - name: init-mydb
-          image: busybox:1.28
-          command: ['sh', '-c', "until nslookup vprocache01.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
       containers:
         - name: tomcat
           image: devopsaravind975/git:app
@@ -33,3 +26,10 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+      initContainers:
+        - name: init-myservice
+          image: busybox:1.28
+          command: ['sh', '-c', "until nslookup vprodb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+        - name: init-mydb
+          image: busybox:1.28
+          command: ['sh', '-c', "until nslookup vprocache01.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
