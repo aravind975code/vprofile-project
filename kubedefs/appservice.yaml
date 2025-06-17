@@ -4,7 +4,7 @@ metadata:
   name: vproapp-service
 spec:
   selector:
-    name: vpromc
+    name: vproapp
   ports:
     - protocol: TCP
       port: 8080
